@@ -1,0 +1,111 @@
+/* Design Tokens - Auto-generated */
+/* Do not edit directly - modify tokens.json instead */
+
+/* === PRIMITIVES === */
+:root {
+  --primitive-color-primary-50: #FFFFFF;
+  --primitive-color-primary-100: #EAFFFF;
+  --primitive-color-primary-200: #B7FFFF;
+  --primitive-color-primary-300: #84EEFF;
+  --primitive-color-primary-400: #51BBFF;
+  --primitive-color-primary-500: #1E88E5;
+  --primitive-color-primary-600: #1565C0;
+  --primitive-color-primary-700: #003C99;
+  --primitive-color-primary-800: #001572;
+  --primitive-color-primary-900: #00004C;
+  --primitive-color-secondary-50: #FFFFFF;
+  --primitive-color-secondary-100: #FFFFFF;
+  --primitive-color-secondary-200: #FFD2CE;
+  --primitive-color-secondary-300: #FF9F9B;
+  --primitive-color-secondary-400: #FF6C68;
+  --primitive-color-secondary-500: #E53935;
+  --primitive-color-secondary-600: #C62828;
+  --primitive-color-secondary-700: #990000;
+  --primitive-color-secondary-800: #720000;
+  --primitive-color-secondary-900: #4C0000;
+  --primitive-color-accent-50: #FFFFFF;
+  --primitive-color-accent-100: #FFFFFF;
+  --primitive-color-accent-200: #FFFFE8;
+  --primitive-color-accent-300: #FFFFB5;
+  --primitive-color-accent-400: #FFFF82;
+  --primitive-color-accent-500: #FFD54F;
+  --primitive-color-accent-600: #D9AF29;
+  --primitive-color-accent-700: #B38903;
+  --primitive-color-accent-800: #8C6200;
+  --primitive-color-accent-900: #663C00;
+  --primitive-color-neutral-bg-primary: #0A0A0F;
+  --primitive-color-neutral-bg-secondary: #12121A;
+  --primitive-color-neutral-bg-tertiary: #1A1A24;
+  --primitive-color-neutral-text-primary: #FFFFFF;
+  --primitive-color-neutral-text-secondary: #A0A0B0;
+  --primitive-color-neutral-border: #2A2A35;
+  --primitive-color-status-success: #22C55E;
+  --primitive-color-status-warning: #F59E0B;
+  --primitive-color-status-error: #E53935;
+  --primitive-color-status-info: #1E88E5;
+  --primitive-glow-blue: rgba(30,136,229,0.3);
+  --primitive-glow-red: rgba(229,57,53,0.2);
+  --primitive-spacing-xs: 4px;
+  --primitive-spacing-sm: 8px;
+  --primitive-spacing-md: 16px;
+  --primitive-spacing-lg: 24px;
+  --primitive-spacing-xl: 32px;
+  --primitive-spacing-2xl: 48px;
+  --primitive-radius-sm: 6px;
+  --primitive-radius-md: 12px;
+  --primitive-radius-lg: 16px;
+  --primitive-radius-xl: 24px;
+  --primitive-radius-full: 9999px;
+  --primitive-font-display: 'Bebas Neue', sans-serif;
+  --primitive-font-body: 'Inter', sans-serif;
+  --primitive-font-mono: ui-monospace, 'JetBrains Mono', monospace;
+  --primitive-font-size-display: 48px;
+  --primitive-font-size-h1: 36px;
+  --primitive-font-size-h2: 28px;
+  --primitive-font-size-h3: 24px;
+  --primitive-font-size-body: 16px;
+  --primitive-font-size-small: 14px;
+  --primitive-font-size-caption: 12px;
+  --primitive-duration-fast: 150ms;
+  --primitive-duration-normal: 300ms;
+}
+
+/* === SEMANTIC === */
+:root {
+  --color-bg-primary: #0A0A0F;
+  --color-bg-secondary: #12121A;
+  --color-bg-tertiary: #1A1A24;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A0A0B0;
+  --color-border: #2A2A35;
+  --color-primary: #1E88E5;
+  --color-primary-hover: #1565C0;
+  --color-primary-active: #003C99;
+  --color-danger: #E53935;
+  --color-danger-hover: #C62828;
+  --color-gold: #FFD54F;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #E53935;
+  --color-info: #1E88E5;
+}
+
+/* === COMPONENTS === */
+:root {
+  --button-bg: #1E88E5;
+  --button-fg: #FFFFFF;
+  --button-bg-hover: #1565C0;
+  --button-radius: 12px;
+  --button-padding-x: 24px;
+  --button-padding-y: 8px;
+  --badge-radius: 6px;
+  --badge-pill-radius: 9999px;
+  --card-bg: #12121A;
+  --card-border: #2A2A35;
+  --card-radius: 16px;
+  --card-padding: 24px;
+  --input-bg: #12121A;
+  --input-border: #2A2A35;
+  --input-focus-ring: #1E88E5;
+  --input-radius: 12px;
+}

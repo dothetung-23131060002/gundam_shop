@@ -1,0 +1,140 @@
+{
+  "brand": "Gundam Shop",
+  "primitive": {
+    "color": {
+      "primary": {
+        "50": { "$value": "#FFFFFF", "$type": "color" },
+        "100": { "$value": "#EAFFFF", "$type": "color" },
+        "200": { "$value": "#B7FFFF", "$type": "color" },
+        "300": { "$value": "#84EEFF", "$type": "color" },
+        "400": { "$value": "#51BBFF", "$type": "color" },
+        "500": { "$value": "#1E88E5", "$type": "color" },
+        "600": { "$value": "#1565C0", "$type": "color" },
+        "700": { "$value": "#003C99", "$type": "color" },
+        "800": { "$value": "#001572", "$type": "color" },
+        "900": { "$value": "#00004C", "$type": "color" }
+      },
+      "secondary": {
+        "50": { "$value": "#FFFFFF", "$type": "color" },
+        "100": { "$value": "#FFFFFF", "$type": "color" },
+        "200": { "$value": "#FFD2CE", "$type": "color" },
+        "300": { "$value": "#FF9F9B", "$type": "color" },
+        "400": { "$value": "#FF6C68", "$type": "color" },
+        "500": { "$value": "#E53935", "$type": "color" },
+        "600": { "$value": "#C62828", "$type": "color" },
+        "700": { "$value": "#990000", "$type": "color" },
+        "800": { "$value": "#720000", "$type": "color" },
+        "900": { "$value": "#4C0000", "$type": "color" }
+      },
+      "accent": {
+        "50": { "$value": "#FFFFFF", "$type": "color" },
+        "100": { "$value": "#FFFFFF", "$type": "color" },
+        "200": { "$value": "#FFFFE8", "$type": "color" },
+        "300": { "$value": "#FFFFB5", "$type": "color" },
+        "400": { "$value": "#FFFF82", "$type": "color" },
+        "500": { "$value": "#FFD54F", "$type": "color" },
+        "600": { "$value": "#D9AF29", "$type": "color" },
+        "700": { "$value": "#B38903", "$type": "color" },
+        "800": { "$value": "#8C6200", "$type": "color" },
+        "900": { "$value": "#663C00", "$type": "color" }
+      },
+      "neutral": {
+        "bg-primary": { "$value": "#0A0A0F", "$type": "color" },
+        "bg-secondary": { "$value": "#12121A", "$type": "color" },
+        "bg-tertiary": { "$value": "#1A1A24", "$type": "color" },
+        "text-primary": { "$value": "#FFFFFF", "$type": "color" },
+        "text-secondary": { "$value": "#A0A0B0", "$type": "color" },
+        "border": { "$value": "#2A2A35", "$type": "color" }
+      },
+      "status": {
+        "success": { "$value": "#22C55E", "$type": "color" },
+        "warning": { "$value": "#F59E0B", "$type": "color" },
+        "error": { "$value": "#E53935", "$type": "color" },
+        "info": { "$value": "#1E88E5", "$type": "color" }
+      }
+    },
+    "glow": {
+      "blue": { "$value": "rgba(30,136,229,0.3)", "$type": "color" },
+      "red": { "$value": "rgba(229,57,53,0.2)", "$type": "color" }
+    },
+    "spacing": {
+      "xs": { "$value": "4px", "$type": "dimension" },
+      "sm": { "$value": "8px", "$type": "dimension" },
+      "md": { "$value": "16px", "$type": "dimension" },
+      "lg": { "$value": "24px", "$type": "dimension" },
+      "xl": { "$value": "32px", "$type": "dimension" },
+      "2xl": { "$value": "48px", "$type": "dimension" }
+    },
+    "radius": {
+      "sm": { "$value": "6px", "$type": "dimension" },
+      "md": { "$value": "12px", "$type": "dimension" },
+      "lg": { "$value": "16px", "$type": "dimension" },
+      "xl": { "$value": "24px", "$type": "dimension" },
+      "full": { "$value": "9999px", "$type": "dimension" }
+    },
+    "font": {
+      "display": { "$value": "'Bebas Neue', sans-serif", "$type": "fontFamily" },
+      "body": { "$value": "'Inter', sans-serif", "$type": "fontFamily" },
+      "mono": { "$value": "ui-monospace, 'JetBrains Mono', monospace", "$type": "fontFamily" }
+    },
+    "font-size": {
+      "display": { "$value": "48px", "$type": "fontSize" },
+      "h1": { "$value": "36px", "$type": "fontSize" },
+      "h2": { "$value": "28px", "$type": "fontSize" },
+      "h3": { "$value": "24px", "$type": "fontSize" },
+      "body": { "$value": "16px", "$type": "fontSize" },
+      "small": { "$value": "14px", "$type": "fontSize" },
+      "caption": { "$value": "12px", "$type": "fontSize" }
+    },
+    "duration": {
+      "fast": { "$value": "150ms", "$type": "other" },
+      "normal": { "$value": "300ms", "$type": "other" }
+    }
+  },
+  "semantic": {
+    "color": {
+      "bg-primary": { "$value": "{primitive.color.neutral.bg-primary}", "$type": "color" },
+      "bg-secondary": { "$value": "{primitive.color.neutral.bg-secondary}", "$type": "color" },
+      "bg-tertiary": { "$value": "{primitive.color.neutral.bg-tertiary}", "$type": "color" },
+      "text-primary": { "$value": "{primitive.color.neutral.text-primary}", "$type": "color" },
+      "text-secondary": { "$value": "{primitive.color.neutral.text-secondary}", "$type": "color" },
+      "border": { "$value": "{primitive.color.neutral.border}", "$type": "color" },
+      "primary": { "$value": "{primitive.color.primary.500}", "$type": "color" },
+      "primary-hover": { "$value": "{primitive.color.primary.600}", "$type": "color" },
+      "primary-active": { "$value": "{primitive.color.primary.700}", "$type": "color" },
+      "danger": { "$value": "{primitive.color.secondary.500}", "$type": "color" },
+      "danger-hover": { "$value": "{primitive.color.secondary.600}", "$type": "color" },
+      "gold": { "$value": "{primitive.color.accent.500}", "$type": "color" },
+      "success": { "$value": "{primitive.color.status.success}", "$type": "color" },
+      "warning": { "$value": "{primitive.color.status.warning}", "$type": "color" },
+      "error": { "$value": "{primitive.color.status.error}", "$type": "color" },
+      "info": { "$value": "{primitive.color.status.info}", "$type": "color" }
+    }
+  },
+  "component": {
+    "button": {
+      "bg": { "$value": "{semantic.color.primary}", "$type": "color" },
+      "fg": { "$value": "{primitive.color.neutral.text-primary}", "$type": "color" },
+      "bg-hover": { "$value": "{semantic.color.primary-hover}", "$type": "color" },
+      "radius": { "$value": "{primitive.radius.md}", "$type": "dimension" },
+      "padding-x": { "$value": "{primitive.spacing.lg}", "$type": "dimension" },
+      "padding-y": { "$value": "{primitive.spacing.sm}", "$type": "dimension" }
+    },
+    "badge": {
+      "radius": { "$value": "{primitive.radius.sm}", "$type": "dimension" },
+      "pill-radius": { "$value": "{primitive.radius.full}", "$type": "dimension" }
+    },
+    "card": {
+      "bg": { "$value": "{semantic.color.bg-secondary}", "$type": "color" },
+      "border": { "$value": "{semantic.color.border}", "$type": "color" },
+      "radius": { "$value": "{primitive.radius.lg}", "$type": "dimension" },
+      "padding": { "$value": "{primitive.spacing.lg}", "$type": "dimension" }
+    },
+    "input": {
+      "bg": { "$value": "{semantic.color.bg-secondary}", "$type": "color" },
+      "border": { "$value": "{semantic.color.border}", "$type": "color" },
+      "focus-ring": { "$value": "{semantic.color.primary}", "$type": "color" },
+      "radius": { "$value": "{primitive.radius.md}", "$type": "dimension" }
+    }
+  }
+}
