@@ -1,14 +1,28 @@
-<!-- Dark Futuristic Navbar with Glassmorphism -->
-<header class="glass-nav fixed top-0 left-0 right-0 z-50">
+<!-- Dark Futuristic Navbar with Glassmorphism + CSS-only workshop backdrop -->
+@php
+    $navItems = [
+        ['route' => 'home', 'pattern' => 'home', 'label' => 'TRANG CHỦ', 'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
+        ['route' => 'products.index', 'pattern' => 'products.*', 'label' => 'SẢN PHẨM', 'icon' => 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'],
+        ['route' => 'batches.index', 'pattern' => 'batches.*', 'label' => 'ĐỢT GOM', 'icon' => 'M21 8l-9-5-9 5v8l9 5 9-5V8zM3.3 8.3L12 13l8.7-4.7M12 13v9'],
+        ['route' => 'cart.index', 'pattern' => 'cart.*', 'label' => 'GIỎ HÀNG', 'icon' => 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.6.6-.2 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'],
+    ];
+    $accountItems = [
+        ['route' => 'orders.mine', 'pattern' => 'orders.*', 'label' => 'ĐƠN HÀNG', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
+        ['route' => 'reservations.index', 'pattern' => 'reservations.*', 'label' => 'LƯU TRỮ', 'icon' => 'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z'],
+        ['route' => 'wishlist.index', 'pattern' => 'wishlist.*', 'label' => 'YÊU THÍCH', 'icon' => 'M4.3 6.3a4.5 4.5 0 000 6.4L12 20.4l7.7-7.7a4.5 4.5 0 00-6.4-6.4L12 7.6l-1.3-1.3a4.5 4.5 0 00-6.4 0z'],
+        ['route' => 'profile.edit', 'pattern' => 'profile.*', 'label' => 'TÀI KHOẢN', 'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
+    ];
+@endphp
+<header class="glass-nav navbar-workshop fixed top-0 left-0 right-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 lg:h-20">
-            
+
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+            <a href="{{ route('home') }}" class="flex items-center gap-3 group flex-shrink-0">
                 <!-- Mecha Logo Icon -->
                 <div class="relative w-10 h-10 lg:w-12 lg:h-12">
                     <div class="absolute inset-0 bg-accent-blue rounded-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="absolute inset-0 flex items-center justify-center drop-shadow-[0_0_10px_rgba(30,136,229,0.55)]">
                         <svg class="w-6 h-6 lg:w-7 lg:h-7 text-accent-blue" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L19.18 7 12 10.18 4.82 7 12 4.18zM4 8.82l7 3.5v7.36l-7-3.5V8.82zm9 10.86V12.32l7-3.5v7.36l-7 3.5z"/>
                         </svg>
@@ -21,38 +35,37 @@
             </a>
 
             <!-- Desktop Navigation -->
-            <nav class="hidden lg:flex items-center gap-8">
-                <a href="{{ route('home') }}" class="text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                    TRANG CHỦ
-                </a>
-                <a href="{{ route('products.index') }}" class="text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                    SẢN PHẨM
-                </a>
-                <a href="{{ route('batches.index') }}" class="text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                    ĐỢT GOM
-                </a>
-                <a href="{{ route('cart.index') }}" class="relative text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                    GIỎ HÀNG
-                    @if(session('cart'))
-                        <span class="absolute -top-2 -right-4 bg-accent-red text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                            {{ count(session('cart')) }}
-                        </span>
-                    @endif
-                </a>
+            <nav class="hidden lg:flex items-center gap-7 xl:gap-8">
+                @foreach($navItems as $item)
+                    @php $active = request()->routeIs($item['pattern']); @endphp
+                    <a href="{{ route($item['route']) }}" @if($active)aria-current="page"@endif
+                       class="relative flex items-center gap-1.5 py-2 min-h-[44px] text-sm font-medium tracking-wide transition-colors {{ $active ? 'text-white' : 'text-text-secondary hover:text-white' }}">
+                        <svg class="w-[18px] h-[18px] {{ $active ? 'text-accent-blue' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $item['icon'] }}"/>
+                        </svg>
+                        {{ $item['label'] }}
+                        @if($item['route'] === 'cart.index' && session('cart'))
+                            <span class="bg-accent-red text-white text-[9px] min-w-4 h-4 px-1 rounded-full inline-flex items-center justify-center font-bold">{{ count(session('cart')) > 9 ? '9+' : count(session('cart')) }}</span>
+                        @endif
+                        @if($active)
+                            <span class="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent-blue rounded-full shadow-[0_0_8px_rgba(30,136,229,0.8)]"></span>
+                        @endif
+                    </a>
+                @endforeach
             </nav>
 
             <!-- Right Section -->
-            <div class="flex items-center gap-4">
-                
+            <div class="flex items-center gap-3 lg:gap-4">
+
                 <!-- Search Toggle (Mobile) -->
-                <button aria-label="Tìm kiếm" class="lg:hidden p-2 text-text-secondary hover:text-white transition-colors">
+                <button aria-label="Tìm kiếm" class="lg:hidden p-2.5 min-h-[44px] min-w-[44px] inline-flex items-center justify-center cursor-pointer text-text-secondary hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                 </button>
 
                 <!-- Theme Toggle -->
-                <button id="theme-toggle" aria-label="Chuyển chế độ sáng/tối" class="p-2 text-text-secondary hover:text-white transition-colors" title="Chế độ sáng/tối">
+                <button id="theme-toggle" aria-label="Chuyển chế độ sáng/tối" class="p-2.5 min-h-[44px] min-w-[44px] inline-flex items-center justify-center cursor-pointer text-text-secondary hover:text-white transition-colors" title="Chế độ sáng/tối">
                     <svg class="w-5 h-5 dark-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                     </svg>
@@ -63,51 +76,56 @@
 
                 <!-- Auth Section -->
                 @auth
-                    <div class="hidden lg:flex items-center gap-4">
-                        <span class="text-sm text-text-secondary">
-                            Xin chào, <span class="text-text-primary font-medium">{{ auth()->user()->name }}</span>
-                        </span>
-                        
+                    <div class="hidden lg:flex items-center gap-3 xl:gap-4">
                         @if(auth()->user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}" class="text-xs font-medium text-accent-blue hover:text-accent-blue-dark transition-colors tracking-wide">
                                 ADMIN
                             </a>
                         @endif
-                        
-                        <a href="{{ route('orders.mine') }}" class="text-xs font-medium text-text-secondary hover:text-white transition-colors tracking-wide">
-                            ĐƠN HÀNG
-                        </a>
 
-                        <a href="{{ route('reservations.index') }}" class="text-xs font-medium text-text-secondary hover:text-white transition-colors tracking-wide">
-                            LƯU TRỮ
-                        </a>
-
-                        <a href="{{ route('wishlist.index') }}" class="text-xs font-medium text-text-secondary hover:text-white transition-colors tracking-wide">
-                            YÊU THÍCH
-                        </a>
-
-                        <a href="{{ route('profile.edit') }}" class="text-xs font-medium text-text-secondary hover:text-white transition-colors tracking-wide">
-                            TÀI KHOẢN
-                        </a>
+                        @foreach($accountItems as $item)
+                            @php $active = request()->routeIs($item['pattern']); @endphp
+                            <a href="{{ route($item['route']) }}" @if($active)aria-current="page"@endif
+                               class="relative flex items-center gap-1 py-2 min-h-[44px] text-xs font-medium tracking-wide transition-colors {{ $active ? 'text-white' : 'text-text-secondary hover:text-white' }}">
+                                <svg class="w-4 h-4 {{ $active ? 'text-accent-blue' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $item['icon'] }}"/>
+                                </svg>
+                                {{ $item['label'] }}
+                                @if($item['route'] === 'wishlist.index')
+                                    @php $wishlistCount = $wishlistCount ?? auth()->user()->wishlists()->count(); @endphp
+                                    @if($wishlistCount > 0)
+                                        <span class="bg-accent-red text-white text-[9px] min-w-4 h-4 px-1 rounded-full inline-flex items-center justify-center font-bold">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                    @endif
+                                @endif
+                                @if($active)
+                                    <span class="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-accent-blue rounded-full shadow-[0_0_8px_rgba(30,136,229,0.8)]"></span>
+                                @endif
+                            </a>
+                        @endforeach
 
                         @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
-                        <a href="{{ route('notifications.index') }}" aria-label="Thông báo{{ $unreadCount > 0 ? ', '.$unreadCount.' chưa đọc' : '' }}" class="relative text-text-secondary hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        <a href="{{ route('notifications.index') }}" @if(request()->routeIs('notifications.*'))aria-current="page"@endif aria-label="Thông báo{{ $unreadCount > 0 ? ', '.$unreadCount.' chưa đọc' : '' }}" class="relative p-1.5 min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-text-secondary hover:text-white transition-colors {{ request()->routeIs('notifications.*') ? 'text-white' : '' }}">
+                            <svg class="w-5 h-5 {{ request()->routeIs('notifications.*') ? 'text-accent-blue' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                             @if($unreadCount > 0)
-                                <span class="absolute -top-1.5 -right-1.5 bg-accent-red text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                                <span class="absolute -top-1 -right-1 bg-accent-red text-white text-[9px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
                             @endif
                         </a>
-                        
+
+                        <span class="w-8 h-8 rounded-full bg-accent-blue/20 border border-accent-blue/40 flex items-center justify-center text-accent-blue text-sm font-bold flex-shrink-0" aria-hidden="true">{{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
+                        <span class="text-sm text-text-secondary whitespace-nowrap truncate max-w-[160px] hidden xl:inline">
+                            Xin chào, <span class="text-text-primary font-medium">{{ auth()->user()->name }}</span>
+                        </span>
+
                         <form action="{{ route('logout') }}" method="POST" class="inline">
                             @csrf
-                            <button type="submit" class="text-xs font-medium text-text-secondary hover:text-accent-red transition-colors tracking-wide">
+                            <button type="submit" class="inline-flex items-center min-h-[44px] cursor-pointer text-xs font-medium text-text-secondary hover:text-accent-red transition-colors tracking-wide">
                                 ĐĂNG XUẤT
                             </button>
                         </form>
                     </div>
                 @else
                     <div class="hidden lg:flex items-center gap-4">
-                        <a href="{{ route('login.form') }}" class="text-sm font-medium text-text-secondary hover:text-white transition-colors tracking-wide">
+                        <a href="{{ route('login.form') }}" class="inline-flex items-center min-h-[44px] text-sm font-medium text-text-secondary hover:text-white transition-colors tracking-wide">
                             ĐĂNG NHẬP
                         </a>
                         <a href="{{ route('register.form') }}" class="btn-primary text-sm px-4 py-2">
@@ -117,7 +135,7 @@
                 @endauth
 
                 <!-- Mobile Menu Toggle -->
-                <button id="mobile-menu-toggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu" class="lg:hidden p-2 text-text-secondary hover:text-white transition-colors">
+                <button id="mobile-menu-toggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu" class="lg:hidden p-2.5 min-h-[44px] min-w-[44px] inline-flex items-center justify-center cursor-pointer text-text-secondary hover:text-white transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -127,61 +145,72 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden lg:hidden border-t border-border bg-bg-primary/95 backdrop-blur-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4 space-y-3">
-            <a href="{{ route('home') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                TRANG CHỦ
-            </a>
-            <a href="{{ route('products.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                SẢN PHẨM
-            </a>
-            <a href="{{ route('batches.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                ĐỢT GOM
-            </a>
-            <a href="{{ route('cart.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                GIỎ HÀNG
-                @if(session('cart'))
-                    <span class="ml-2 bg-accent-red text-white text-[10px] px-2 py-0.5 rounded-full">{{ count(session('cart')) }}</span>
-                @endif
-            </a>
-            
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-white/10 bg-bg-primary/95 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 space-y-1">
+            @foreach($navItems as $item)
+                @php $active = request()->routeIs($item['pattern']); @endphp
+                <a href="{{ route($item['route']) }}" @if($active)aria-current="page"@endif class="flex items-center gap-3 py-3 min-h-[44px] text-sm font-medium tracking-wide transition-colors {{ $active ? 'text-white' : 'text-text-secondary hover:text-white' }}">
+                    <svg class="w-5 h-5 {{ $active ? 'text-accent-blue' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $item['icon'] }}"/>
+                    </svg>
+                    {{ $item['label'] }}
+                    @if($item['route'] === 'cart.index' && session('cart'))
+                        <span class="ml-auto bg-accent-red text-white text-[10px] px-2 py-0.5 rounded-full">{{ count(session('cart')) }}</span>
+                    @endif
+                    @if($active)
+                        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-accent-blue shadow-[0_0_8px_rgba(30,136,229,0.8)]"></span>
+                    @endif
+                </a>
+            @endforeach
+
             <!-- Theme Toggle (Mobile) -->
-            <button onclick="document.getElementById('theme-toggle').click()" class="flex items-center gap-3 py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
+            <button onclick="document.getElementById('theme-toggle').click()" class="flex items-center gap-3 py-3 min-h-[44px] cursor-pointer text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide w-full">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                 </svg>
                 CHẾ ĐỘ SÁNG/TỐI
             </button>
-            
-            <div class="border-t border-border pt-3 mt-3">
+
+            <div class="border-t border-white/10 pt-3 mt-3">
                 @auth
-                    <div class="space-y-3">
-                        <p class="text-sm text-text-secondary">
-                            Xin chào, <span class="text-text-primary font-medium">{{ auth()->user()->name }}</span>
-                        </p>
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-3 py-2">
+                            <span class="w-9 h-9 rounded-full bg-accent-blue/20 border border-accent-blue/40 flex items-center justify-center text-accent-blue font-bold flex-shrink-0" aria-hidden="true">{{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
+                            <p class="text-sm text-text-secondary truncate">
+                                Xin chào, <span class="text-text-primary font-medium">{{ auth()->user()->name }}</span>
+                            </p>
+                        </div>
                         @if(auth()->user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}" class="block py-2 text-accent-blue text-sm font-medium tracking-wide">
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center py-3 min-h-[44px] text-accent-blue text-sm font-medium tracking-wide">
                                 QUẢN TRỊ
                             </a>
                         @endif
-                        <a href="{{ route('orders.mine') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                            ĐƠN HÀNG CỦA TÔI
-                        </a>
-                        <a href="{{ route('reservations.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                            LƯU TRỮ
-                        </a>
-                        <a href="{{ route('wishlist.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                            YÊU THÍCH
-                        </a>
-                        <a href="{{ route('notifications.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                            THÔNG BÁO @if(isset($unreadCount) && $unreadCount > 0)<span class="ml-1 bg-accent-red text-white text-[9px] px-1.5 py-0.5 rounded-full">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>@endif
-                        </a>
-                        <a href="{{ route('profile.edit') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                            TÀI KHOẢN
+                        @foreach($accountItems as $item)
+                            @php $active = request()->routeIs($item['pattern']); @endphp
+                            <a href="{{ route($item['route']) }}" @if($active)aria-current="page"@endif class="flex items-center gap-3 py-3 min-h-[44px] text-sm font-medium tracking-wide transition-colors {{ $active ? 'text-white' : 'text-text-secondary hover:text-white' }}">
+                                <svg class="w-5 h-5 {{ $active ? 'text-accent-blue' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $item['icon'] }}"/>
+                                </svg>
+                                {{ $item['route'] === 'orders.mine' ? 'ĐƠN HÀNG CỦA TÔI' : $item['label'] }}
+                                @if($item['route'] === 'wishlist.index')
+                                    @php $wishlistCountMobile = $wishlistCount ?? auth()->user()->wishlists()->count(); @endphp
+                                    @if($wishlistCountMobile > 0)
+                                        <span class="bg-accent-red text-white text-[9px] px-1.5 py-0.5 rounded-full">{{ $wishlistCountMobile > 9 ? '9+' : $wishlistCountMobile }}</span>
+                                    @endif
+                                @endif
+                                @if($active)
+                                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-accent-blue shadow-[0_0_8px_rgba(30,136,229,0.8)]"></span>
+                                @endif
+                            </a>
+                        @endforeach
+                        <a href="{{ route('notifications.index') }}" @if(request()->routeIs('notifications.*'))aria-current="page"@endif class="flex items-center gap-3 py-3 min-h-[44px] text-sm font-medium tracking-wide transition-colors {{ request()->routeIs('notifications.*') ? 'text-white' : 'text-text-secondary hover:text-white' }}">
+                            <svg class="w-5 h-5 {{ request()->routeIs('notifications.*') ? 'text-accent-blue' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            THÔNG BÁO
+                            @if(isset($unreadCount) && $unreadCount > 0)<span class="bg-accent-red text-white text-[9px] px-1.5 py-0.5 rounded-full">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>@endif
                         </a>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button type="submit" class="py-2 text-text-secondary hover:text-accent-red transition-colors text-sm font-medium tracking-wide">
+                            <button type="submit" class="py-3 min-h-[44px] cursor-pointer text-text-secondary hover:text-accent-red transition-colors text-sm font-medium tracking-wide">
                                 ĐĂNG XUẤT
                             </button>
                         </form>
@@ -208,7 +237,7 @@
 <script>
     const toggle = document.getElementById('mobile-menu-toggle');
     const menu = document.getElementById('mobile-menu');
-    
+
     toggle.addEventListener('click', () => {
         const open = menu.classList.toggle('hidden');
         toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
