@@ -29,9 +29,10 @@
                         Lọc sản phẩm
                     </h3>
 
-                    <!-- Search -->
-                    <form action="{{ route('products.index') }}" method="GET" class="mb-6">
-                        <div class="relative">
+                    <!-- Search + Filter Form (một form duy nhất cho toàn bộ filter) -->
+                    <form action="{{ route('products.index') }}" method="GET">
+                        <!-- Search -->
+                        <div class="relative mb-6">
                             <input type="text" 
                                    name="keyword" 
                                    value="{{ request('keyword') }}"
@@ -42,65 +43,65 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
-                    </form>
 
-                    <!-- Category Filter -->
-                    <div class="mb-6">
-                        <h4 class="text-text-secondary text-sm font-medium mb-3 uppercase tracking-wider">Danh mục</h4>
-                        <div class="space-y-2">
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="category_id" value="" 
-                                       {{ !request('category_id') ? 'checked' : '' }}
-                                       onchange="this.form.submit()"
-                                       class="w-4 h-4 accent-accent-blue">
-                                <span class="text-text-secondary text-sm group-hover:text-white transition-colors">Tất cả</span>
-                            </label>
-                            @foreach($categories as $category)
+                        <!-- Category Filter -->
+                        <div class="mb-6">
+                            <h4 class="text-text-secondary text-sm font-medium mb-3 uppercase tracking-wider">Danh mục</h4>
+                            <div class="space-y-2">
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="category_id" value="{{ $category->id }}" 
-                                           {{ request('category_id') == $category->id ? 'checked' : '' }}
+                                    <input type="radio" name="category_id" value="" 
+                                           {{ !request('category_id') ? 'checked' : '' }}
                                            onchange="this.form.submit()"
                                            class="w-4 h-4 accent-accent-blue">
-                                    <span class="text-text-secondary text-sm group-hover:text-white transition-colors">{{ $category->name }}</span>
+                                    <span class="text-text-secondary text-sm group-hover:text-white transition-colors">Tất cả</span>
                                 </label>
-                            @endforeach
+                                @foreach($categories as $category)
+                                    <label class="flex items-center gap-3 cursor-pointer group">
+                                        <input type="radio" name="category_id" value="{{ $category->id }}" 
+                                               {{ request('category_id') == $category->id ? 'checked' : '' }}
+                                               onchange="this.form.submit()"
+                                               class="w-4 h-4 accent-accent-blue">
+                                        <span class="text-text-secondary text-sm group-hover:text-white transition-colors">{{ $category->name }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Price Filter -->
-                    <div class="mb-6">
-                        <h4 class="text-text-secondary text-sm font-medium mb-3 uppercase tracking-wider">Khoảng giá</h4>
-                        <div class="flex gap-2">
-                            <input type="number" 
-                                   name="min_price" 
-                                   value="{{ request('min_price') }}"
-                                   placeholder="Từ"
-                                   aria-label="Giá tối thiểu"
-                                   class="form-input text-sm w-1/2">
-                            <input type="number" 
-                                   name="max_price" 
-                                   value="{{ request('max_price') }}"
-                                   placeholder="Đến"
-                                   aria-label="Giá tối đa"
-                                   class="form-input text-sm w-1/2">
+                        <!-- Price Filter -->
+                        <div class="mb-6">
+                            <h4 class="text-text-secondary text-sm font-medium mb-3 uppercase tracking-wider">Khoảng giá</h4>
+                            <div class="flex gap-2">
+                                <input type="number" 
+                                       name="min_price" 
+                                       value="{{ request('min_price') }}"
+                                       placeholder="Từ"
+                                       aria-label="Giá tối thiểu"
+                                       class="form-input text-sm w-1/2">
+                                <input type="number" 
+                                       name="max_price" 
+                                       value="{{ request('max_price') }}"
+                                       placeholder="Đến"
+                                       aria-label="Giá tối đa"
+                                       class="form-input text-sm w-1/2">
+                            </div>
+                            <button type="submit" class="mt-3 w-full btn-primary text-sm py-2">
+                                Áp dụng
+                            </button>
                         </div>
-                        <button onclick="this.closest('form').submit()" class="mt-3 w-full btn-primary text-sm py-2">
-                            Áp dụng
-                        </button>
-                    </div>
 
-                    <!-- Sort -->
-                    <div>
-                        <h4 class="text-text-secondary text-sm font-medium mb-3 uppercase tracking-wider">Sắp xếp</h4>
-                        <select name="sort" 
-                                onchange="this.form.submit()"
-                                class="form-input text-sm">
-                            <option value="">Mới nhất</option>
-                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Giá thấp → cao</option>
-                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá cao → thấp</option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Tên A → Z</option>
-                        </select>
-                    </div>
+                        <!-- Sort -->
+                        <div>
+                            <h4 class="text-text-secondary text-sm font-medium mb-3 uppercase tracking-wider">Sắp xếp</h4>
+                            <select name="sort" 
+                                    onchange="this.form.submit()"
+                                    class="form-input text-sm">
+                                <option value="">Mới nhất</option>
+                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Giá thấp → cao</option>
+                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá cao → thấp</option>
+                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Tên A → Z</option>
+                            </select>
+                        </div>
+                    </form>
                 </div>
             </aside>
 
