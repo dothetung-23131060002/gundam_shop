@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Lịch sử giữ slot - Gundam Shop')
+@section('title', 'Slot đang giữ - Gundam Shop')
 
 @section('content')
 
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-white">LỊCH SỬ GIỮ SLOT</h1>
-            <p class="text-text-secondary text-sm mt-1">Quản lý các slot bạn đã đặt cọc</p>
+            <h1 class="text-2xl font-bold text-white">SLOT ĐANG GIỮ</h1>
+            <p class="text-text-secondary text-sm mt-1">Quản lý các slot bạn đang giữ</p>
         </div>
         <a href="{{ route('batches.index') }}" class="btn-primary px-4 py-2 text-sm">Xem đợt gom</a>
     </div>
@@ -44,8 +44,6 @@
                                     <x-status-pill tone="red">Đã hoàn cọc</x-status-pill>
                                 @elseif($reservation->status === 'cancelled')
                                     <x-status-pill tone="red">Đã hủy</x-status-pill>
-                                @elseif($reservation->status === 'converted')
-                                    <x-status-pill tone="gold">Đã chuyển đơn</x-status-pill>
                                 @else
                                     <x-status-pill tone="gray">{{ $reservation->status }}</x-status-pill>
                                 @endif

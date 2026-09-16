@@ -98,6 +98,13 @@ class ReservationController extends Controller
     {
         $reservations = Reservation::with(['batch.product'])
             ->where('user_id', auth()->id())
+            ->where(function ($q) {
+                $q->where('status', 'reserved')
+                  ->orWhere(function ($q2) {
+                      $q2->whereIn('status', ['refunded', 'cancelled'])
+                         ->where('updated_at', '>=', now()->subDays(7));
+                  });
+            })
             ->latest()
             ->paginate(10);
 
