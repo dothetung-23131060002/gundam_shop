@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Notifications\WelcomeRegistered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -32,7 +33,15 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        $user->notify(new WelcomeRegistered);
+        try {
+            $user->notify(new WelcomeRegistered);
+        } catch (\Throwable $e) {
+            Log::warning('Gửi mail chào mừng thất bại', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return redirect()->route('home');
     }

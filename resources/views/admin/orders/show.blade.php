@@ -95,14 +95,49 @@
                             </div>
                             <div>
                                 <p class="text-text-secondary">Trạng thái:</p>
-                                @if($order->payment_status == 'paid')
-                                    <span class="px-3 py-1 bg-green-500/10 border border-green-500/30 rounded-full text-green-400 text-xs">Đã thanh toán</span>
+                                @php $payStatus = $order->payment_status; @endphp
+                                @if($payStatus == 'paid')
+                                    <span class="px-3 py-1 bg-green-500/10 border border-green-500/30 rounded-full text-green-400 text-xs">Thanh toán thành công</span>
+                                @elseif($payStatus == 'awaiting_confirmation')
+                                    <span class="px-3 py-1 bg-yellow-500/10 border border-yellow-500/30 rounded-full text-yellow-400 text-xs animate-pulse">Chờ shop xác nhận</span>
+                                @elseif($payStatus == 'payment_rejected')
+                                    <span class="px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-full text-red-400 text-xs">Chưa được xác nhận</span>
                                 @else
                                     <span class="px-3 py-1 bg-yellow-500/10 border border-yellow-500/30 rounded-full text-yellow-400 text-xs">Chờ thanh toán</span>
                                 @endif
                             </div>
                         </div>
                     </div>
+
+                    @if($order->payment_status === 'awaiting_confirmation')
+                        <div class="bg-accent-gold/10 border border-accent-gold/30 rounded-xl p-6">
+                            <h3 class="text-accent-gold font-semibold mb-2">Chờ xác nhận thanh toán</h3>
+                            <p class="text-text-secondary text-sm mb-4">Kiểm tra giao dịch thực tế trên ngân hàng/MoMo (số tiền {{ number_format($order->total_amount, 0, ',', '.') }}đ) rồi xác nhận hoặc từ chối.</p>
+                            <div class="flex flex-wrap gap-3">
+                                <form action="{{ route('admin.orders.confirm-payment', $order) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" onclick="return confirm('Xác nhận đã nhận đủ tiền đơn #{{ $order->id }}?')" class="btn-primary px-6 py-3 text-sm font-medium">XÁC NHẬN ĐÃ NHẬN TIỀN</button>
+                                </form>
+                                <form action="{{ route('admin.orders.reject-payment', $order) }}" method="POST" class="flex flex-wrap items-center gap-2">
+                                    @csrf
+                                    <input type="text" name="reason" value="{{ old('reason') }}" maxlength="500" placeholder="Lý do từ chối (hiển thị cho khách)" aria-label="Lý do từ chối" class="bg-bg-primary border border-border rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-accent-red min-w-64">
+                                    <button type="submit" onclick="return confirm('Từ chối thanh toán đơn #{{ $order->id }}?')" class="px-6 py-3 text-sm font-medium bg-accent-red/10 border border-accent-red/30 rounded-xl text-accent-red hover:bg-accent-red/20 transition-colors">TỪ CHỐI</button>
+                                </form>
+                            </div>
+                            @error('reason') <p class="text-accent-red text-xs mt-2">{{ $message }}</p> @enderror
+                        </div>
+                    @endif
+
+                    @if($order->payment_method === 'cod' && $order->payment_status === 'unpaid' && $order->order_status === 'shipping')
+                        <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-6">
+                            <h3 class="text-green-400 font-semibold mb-2">Xác nhận thu tiền COD</h3>
+                            <p class="text-text-secondary text-sm mb-4">Khách đã nhận hàng và thanh toán tiền mặt. Xác nhận để chuyển đơn sang trạng thái "Đã hoàn tất".</p>
+                            <form action="{{ route('admin.orders.collect-cod', $order) }}" method="POST">
+                                @csrf
+                                <button type="submit" onclick="return confirm('Xác nhận đã thu tiền COD đơn #{{ $order->id }}? Đơn sẽ chuyển sang "Đã hoàn tất" và đánh dấu đã thanh toán.')" class="px-6 py-3 text-sm font-medium bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 hover:bg-green-500/30 transition-colors">XÁC NHẬN ĐÃ THU TIỀN COD</button>
+                            </form>
+                        </div>
+                    @endif
 
                     <div class="bg-bg-secondary border border-border rounded-xl p-6">
                         <h3 class="text-white font-semibold mb-4">Tổng quan</h3>

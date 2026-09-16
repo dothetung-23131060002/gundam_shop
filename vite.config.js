@@ -10,4 +10,12 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        allowedHosts: true,
+        host: true,
+        // Không hardcode hmr.host theo domain ngrok (đổi mỗi phiên sẽ gây asset
+        // trỏ sai host). Demo qua ngrok luôn dùng bản build (npm run build),
+        // không chạy dev server song song. Muốn HMR qua tunnel thì set tạm
+        // hmr.host theo domain của phiên đó rồi revert.
+    },
 });

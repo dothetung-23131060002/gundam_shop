@@ -71,7 +71,7 @@
                         
                         @if($user->orders->count() > 0)
                             <div class="space-y-4">
-                                @foreach($user->orders->latest()->get() as $order)
+                                @foreach($user->orders->sortByDesc('created_at') as $order)
                                     <div class="flex items-center justify-between p-4 bg-bg-primary rounded-xl">
                                         <div class="flex items-center gap-4">
                                             <div class="w-12 h-12 rounded-full bg-accent-blue/20 flex items-center justify-center">

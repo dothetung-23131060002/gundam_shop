@@ -50,7 +50,11 @@ class AdminExportTest extends TestCase
         $this->assertEquals("\xEF\xBB\xBF", substr($content, 0, 3), 'Thiếu BOM UTF-8');
         $this->assertStringContainsString('Mã đơn', $content);
         $this->assertStringContainsString('Tổng số đơn', $content);
-        $this->assertStringContainsString('Doanh thu đã thu (paid)', $content);
+        // Accounting contract: gross giữ cả paid+cancelled + các dòng Net/Refund/Forfeiture.
+        $this->assertStringContainsString('Gross đã thu (paid', $content);
+        $this->assertStringContainsString('Doanh thu thuần (Net)', $content);
+        $this->assertStringContainsString('Hoàn tiền đã chi (completed)', $content);
+        $this->assertStringContainsString('Tịch thu cọc (không trừ Net)', $content);
     }
 
     public function test_batches_export_respects_filters()

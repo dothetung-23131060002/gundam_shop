@@ -24,6 +24,22 @@
         </header>
 
         <main class="p-6">
+            <form method="GET" action="{{ route('admin.orders.index') }}" class="mb-4 flex flex-wrap items-center gap-3">
+                <label for="payment_status" class="text-text-secondary text-sm">Lọc thanh toán:</label>
+                <select name="payment_status" id="payment_status" onchange="this.form.submit()" class="text-sm px-3 py-2 rounded-lg border bg-bg-secondary border-border text-white">
+                    <option value="">Tất cả</option>
+                    @foreach($paymentStatuses as $key => $label)
+                        <option value="{{ $key }}" {{ request('payment_status') === $key ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+                @if(request()->filled('payment_status'))
+                    <a href="{{ route('admin.orders.index') }}" class="text-text-secondary hover:text-white text-sm transition-colors">Xóa lọc</a>
+                @endif
+                <a href="{{ route('admin.orders.index', ['payment_status' => 'awaiting_confirmation']) }}" class="text-sm px-3 py-2 rounded-lg border border-accent-gold/50 text-accent-gold hover:bg-accent-gold/10 transition-colors">
+                    Chờ shop xác nhận
+                </a>
+            </form>
+
             <div class="bg-bg-secondary border border-border rounded-xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -40,9 +56,12 @@
                         </thead>
                         <tbody class="divide-y divide-border">
                             @forelse($orders as $order)
-                                <tr class="hover:bg-bg-primary/50 transition-colors">
+                                <tr class="hover:bg-bg-primary/50 transition-colors {{ $order->payment_status === 'awaiting_confirmation' ? 'bg-accent-gold/5' : '' }}">
                                     <td class="px-6 py-4">
                                         <span class="text-accent-blue font-medium">#{{ $order->id }}</span>
+                                        @if($order->payment_status === 'awaiting_confirmation')
+                                            <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs border border-accent-gold/50 text-accent-gold animate-pulse">Cần xác nhận</span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4">
                                         <div>
@@ -54,10 +73,15 @@
                                         <span class="price-display text-sm">{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        @if($order->payment_status == 'paid')
-                                            <x-status-pill tone="green">Đã thanh toán</x-status-pill>
+                                        @php $payStatus = $order->payment_status; @endphp
+                                        @if($payStatus == 'paid')
+                                            <x-status-pill tone="green">Thanh toán thành công</x-status-pill>
+                                        @elseif($payStatus == 'awaiting_confirmation')
+                                            <x-status-pill tone="gold" pulse>Chờ shop xác nhận</x-status-pill>
+                                        @elseif($payStatus == 'payment_rejected')
+                                            <x-status-pill tone="red">Chưa được xác nhận</x-status-pill>
                                         @else
-                                            <x-status-pill tone="gold">Chờ thanh toán</x-status-pill>
+                                            <x-status-pill tone="gray">Chờ thanh toán</x-status-pill>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4">

@@ -78,7 +78,10 @@ class CheckoutController extends Controller
                 'shipping_address' => $validated['shipping_address'],
                 'total_amount' => $total,
                 'payment_method' => $validated['payment_method'],
-                'payment_status' => 'unpaid',
+                // QR/MoMo đi flow xác thực thủ công; COD giữ legacy unpaid.
+                'payment_status' => $validated['payment_method'] === 'qr'
+                    ? Order::PAY_PENDING
+                    : 'unpaid',
                 'order_status' => 'pending',
             ]);
 

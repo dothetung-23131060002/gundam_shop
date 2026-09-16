@@ -27,4 +27,19 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function refundDetails()
+    {
+        return $this->hasMany(RefundTransactionDetail::class);
+    }
+
+    public function returnRequests()
+    {
+        return $this->hasMany(ReturnRequest::class);
+    }
+
+    public function warrantyRequests()
+    {
+        return $this->hasMany(WarrantyRequest::class);
+    }
 }

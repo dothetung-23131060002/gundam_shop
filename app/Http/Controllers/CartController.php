@@ -21,19 +21,25 @@ class CartController extends Controller
 
     public function add(Request $request, Product $product)
     {
-        $request->validate([
+        $validated = $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
 
         $cart = session()->get('cart', []);
+        $newQuantity = (int) $validated['quantity'] + (int) ($cart[$product->id]['quantity'] ?? 0);
+
+        // Stock guard (UX fast-fail). Checkout re-checks under lock to stop races.
+        if ($newQuantity > $product->quantity) {
+            return back()->with('error', "Sản phẩm {$product->name} chỉ còn {$product->quantity} sản phẩm.");
+        }
 
         if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity'] += $request->quantity;
+            $cart[$product->id]['quantity'] = $newQuantity;
         } else {
             $cart[$product->id] = [
                 'name' => $product->name,
                 'price' => $product->price,
-                'quantity' => $request->quantity,
+                'quantity' => $validated['quantity'],
                 'image' => $product->image,
                 'image_url' => $product->image_url,
             ];
@@ -47,14 +53,19 @@ class CartController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $request->validate([
+        $validated = $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
+
+        // Stock guard (UX fast-fail). Checkout re-checks under lock to stop races.
+        if ((int) $validated['quantity'] > $product->quantity) {
+            return back()->with('error', "Sản phẩm {$product->name} chỉ còn {$product->quantity} sản phẩm.");
+        }
 
         $cart = session()->get('cart', []);
 
         if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity'] = $request->quantity;
+            $cart[$product->id]['quantity'] = (int) $validated['quantity'];
         }
 
         session()->put('cart', $cart);

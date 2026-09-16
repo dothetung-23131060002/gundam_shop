@@ -6,9 +6,11 @@ use App\Models\Batch;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Payment;
-use App\Models\RefundTransaction;
 use App\Models\Reservation;
+use App\Notifications\PaymentStatusUpdated;
 use App\Services\BatchService;
+use App\Services\RefundService;
+use App\Services\VietQrService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -108,10 +110,15 @@ class ReservationController extends Controller
 
         $reservation->load(['batch.product', 'payments', 'refundTransactions', 'order']);
 
-        return view('reservations.show', compact('reservation'));
+        $paymentOptions = VietQrService::buildOptions(
+            $reservation->deposit_paid,
+            VietQrService::depositAddInfo($reservation->id, $reservation->batch_id)
+        );
+
+        return view('reservations.show', compact('reservation', 'paymentOptions'));
     }
 
-    public function destroy(Reservation $reservation)
+    public function destroy(Reservation $reservation, RefundService $refundService)
     {
         abort_unless($reservation->user_id === auth()->id(), 403);
 
@@ -119,31 +126,14 @@ class ReservationController extends Controller
             return back()->with('error', 'Không thể hủy giữ slot lúc này.');
         }
 
-        DB::transaction(function () use ($reservation) {
-            $depositPaid = $reservation->deposit_paid;
-
-            if ($depositPaid > 0) {
-                RefundTransaction::create([
-                    'reservation_id' => $reservation->id,
-                    'amount' => $depositPaid,
-                    'reason' => 'User tự hủy giữ slot',
-                    'refunded_at' => now(),
-                ]);
-
-                Payment::create([
-                    'user_id' => $reservation->user_id,
-                    'reservation_id' => $reservation->id,
-                    'amount' => $depositPaid,
-                    'type' => 'refund',
-                    'note' => 'Hoàn cọc tự động do user hủy giữ slot',
-                ]);
-            }
-
-            $reservation->update([
-                'deposit_paid' => 0,
-                'status' => 'cancelled',
-            ]);
-        });
+        // Service sở hữu transaction (caller không bọc DB::transaction ngoài).
+        // cancel flip trạng thái ngay, complete() đi tiền ngay để giữ nguyên
+        // hành vi ledger cũ (status + deposit 0 + refund completed + Payment).
+        $refund = $refundService->cancelReservationAndRefundDeposit(
+            $reservation->id,
+            RefundService::REASON_USER_CANCEL_DEPOSIT
+        );
+        $refundService->complete($refund->id);
 
         return redirect()->route('reservations.index')
             ->with('success', 'Đã hủy giữ slot. Số tiền cọc đã được hoàn về tài khoản.');
@@ -159,7 +149,12 @@ class ReservationController extends Controller
 
         $reservation->load('batch.product');
 
-        return view('reservations.pay-balance', compact('reservation'));
+        $paymentOptions = VietQrService::buildOptions(
+            $reservation->balanceAmount(),
+            VietQrService::balanceAddInfo($reservation->id)
+        );
+
+        return view('reservations.pay-balance', compact('reservation', 'paymentOptions'));
     }
 
     public function processBalancePayment(Request $request, Reservation $reservation)
@@ -172,6 +167,10 @@ class ReservationController extends Controller
             'customer_email' => 'nullable|email',
             'shipping_address' => 'required|string|max:500',
         ]);
+
+        if (! VietQrService::hasValidMethods()) {
+            return back()->with('error', 'Chưa cấu hình phương thức thanh toán. Vui lòng liên hệ shop.');
+        }
 
         $order = DB::transaction(function () use ($reservation, $validated) {
             $locked = Reservation::lockForUpdate()->find($reservation->id);
@@ -186,6 +185,20 @@ class ReservationController extends Controller
 
             $balance = $locked->balanceAmount();
 
+            // Chống submit trùng khi yêu cầu trước đang chờ shop xác nhận.
+            $pendingExists = Order::where('reservation_id', $locked->id)
+                ->whereIn('payment_status', [Order::PAY_PENDING, Order::PAY_AWAITING])
+                ->exists();
+
+            if ($pendingExists) {
+                throw ValidationException::withMessages([
+                    'reservation' => 'Yêu cầu thanh toán của bạn đang chờ shop xác nhận.',
+                ]);
+            }
+
+            // Flow xác thực thủ công: đơn đi pending → awaiting trong cùng
+            // transaction, reservation CHƯA convert. Chỉ admin approve mới
+            // convert (xem Admin\OrderController::confirmPayment).
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'batch_id' => $locked->batch_id,
@@ -196,7 +209,7 @@ class ReservationController extends Controller
                 'shipping_address' => $validated['shipping_address'],
                 'total_amount' => $locked->totalProductPrice(),
                 'payment_method' => 'balance',
-                'payment_status' => 'paid',
+                'payment_status' => Order::PAY_PENDING,
                 'order_status' => 'pending',
             ]);
 
@@ -218,12 +231,15 @@ class ReservationController extends Controller
                 'note' => "Thanh toán phần còn lại batch #{$locked->batch_id} - {$locked->batch->product->name}",
             ]);
 
-            $locked->update(['status' => 'converted']);
+            // User submit form sau khi chuyển tiền = claim đã thanh toán.
+            $order->update(['payment_status' => Order::PAY_AWAITING]);
 
             return $order;
         });
 
+        PaymentStatusUpdated::sendToUserAndAdmins($order->user, $order, Order::PAY_PENDING, Order::PAY_AWAITING);
+
         return redirect()->route('orders.show', $order)
-            ->with('success', 'Thanh toán thành công! Đơn hàng của bạn đã được tạo.');
+            ->with('success', 'Đã gửi yêu cầu xác nhận thanh toán. Shop đang kiểm tra giao dịch.');
     }
 }

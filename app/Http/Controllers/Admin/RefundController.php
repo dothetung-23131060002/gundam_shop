@@ -10,26 +10,37 @@ class RefundController extends Controller
 {
     public function index(Request $request)
     {
-        $query = RefundTransaction::with(['reservation.user', 'reservation.batch.product'])->latest();
+        $query = RefundTransaction::with(['reservation.user', 'reservation.batch.product', 'order.user'])->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
 
         if ($request->filled('keyword')) {
             $keyword = $request->keyword;
-            $query->whereHas('reservation.user', function ($q) use ($keyword) {
-                $q->where('name', 'like', "%{$keyword}%")
-                    ->orWhere('email', 'like', "%{$keyword}%");
+            $query->where(function ($q) use ($keyword) {
+                $q->whereHas('reservation.user', function ($sq) use ($keyword) {
+                    $sq->where('name', 'like', "%{$keyword}%")
+                        ->orWhere('email', 'like', "%{$keyword}%");
+                })->orWhereHas('order.user', function ($sq) use ($keyword) {
+                    $sq->where('name', 'like', "%{$keyword}%")
+                        ->orWhere('email', 'like', "%{$keyword}%");
+                });
             });
         }
 
         $refunds = $query->paginate(10)->withQueryString();
 
-        $totalRefunded = RefundTransaction::sum('amount');
+        // Accounting contract: only completed monetary refunds count
+        // (excludes pending/failed/forfeiture), same as dashboard Net Revenue.
+        $totalRefunded = RefundTransaction::monetary()->sum('amount');
 
         return view('admin.refunds.index', compact('refunds', 'totalRefunded'));
     }
 
     public function show(RefundTransaction $refund)
     {
-        $refund->load(['reservation.user', 'reservation.batch.product', 'reservation.payments']);
+        $refund->load(['reservation.user', 'reservation.batch.product', 'reservation.payments', 'order.user', 'details']);
 
         return view('admin.refunds.show', compact('refund'));
     }

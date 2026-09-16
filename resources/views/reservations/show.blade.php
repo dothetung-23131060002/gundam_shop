@@ -51,7 +51,7 @@
                                             <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         </div>
                                         <div>
-                                            <p class="text-white text-sm">Hoàn cọc</p>
+                                            <p class="text-white text-sm">{{ $payment->type === 'balance' ? 'Thanh toán số còn lại' : ($payment->type === 'refund' ? 'Hoàn tiền' : $payment->type) }}</p>
                                             <p class="text-text-secondary text-xs">{{ $payment->created_at->format('d/m/Y H:i') }}</p>
                                         </div>
                                     @endif
@@ -99,6 +99,13 @@
                     </div>
                 </div>
 
+                @if($reservation->status === 'reserved')
+                    <div class="mt-4 pt-4 border-t border-border">
+                        <h4 class="text-white text-sm font-medium mb-3">Thông tin đặt cọc</h4>
+                        @include('components.payment-methods', ['paymentOptions' => $paymentOptions ?? []])
+                    </div>
+                @endif
+
                 @if($reservation->isCancellable())
                     <div class="mt-4 pt-4 border-t border-border">
                         <form action="{{ route('reservations.destroy', $reservation) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy giữ slot? Số tiền cọc sẽ được hoàn về tài khoản.')">
@@ -144,8 +151,10 @@
                             <x-status-pill tone="red">Đã hoàn cọc</x-status-pill>
                         @elseif($reservation->status === 'cancelled')
                             <x-status-pill tone="red">Đã hủy</x-status-pill>
-                        @else
+                        @elseif($reservation->status === 'converted')
                             <x-status-pill tone="gold">Đã chuyển đơn</x-status-pill>
+                        @else
+                            <x-status-pill tone="gray">{{ $reservation->status }}</x-status-pill>
                         @endif
                     </div>
                     <div class="flex justify-between text-sm">

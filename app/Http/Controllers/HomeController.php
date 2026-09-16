@@ -11,7 +11,8 @@ class HomeController extends Controller
     {
         $categories = Category::latest()->get();
         $products = Product::with(['category', 'brand'])->orderByDesc('id')->take(8)->get();
+        $bestSellers = Product::bestSellers()->with(['category', 'brand'])->limit(8)->get();
 
-        return view('home', compact('categories', 'products'));
+        return view('home', compact('categories', 'products', 'bestSellers'));
     }
 }

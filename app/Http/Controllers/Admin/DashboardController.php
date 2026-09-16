@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Batch;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\RefundTransaction;
 use App\Models\Reservation;
 use App\Models\User;
 
@@ -16,7 +17,13 @@ class DashboardController extends Controller
         $totalProducts = Product::count();
         $totalUsers = User::count();
         $totalOrders = Order::count();
-        $totalRevenue = Order::where('payment_status', 'paid')->sum('total_amount');
+
+        // Accounting contract: Gross = paid (kể cả cancelled);
+        // Refund = completed monetary (loại forfeiture); Net = Gross - Refund.
+        $grossCollected = (float) Order::paid()->sum('total_amount');
+        $successfulRefunds = (float) RefundTransaction::monetary()->sum('amount');
+        $netRevenue = $grossCollected - $successfulRefunds;
+        $forfeitureIncome = (float) RefundTransaction::forfeitures()->sum('amount');
         $newOrders = Order::where('order_status', 'pending')->latest()->take(5)->get();
 
         $totalBatches = Batch::count();
@@ -43,7 +50,8 @@ class DashboardController extends Controller
             ->get();
 
         return view('admin.dashboard', compact(
-            'totalProducts', 'totalUsers', 'totalOrders', 'totalRevenue', 'newOrders',
+            'totalProducts', 'totalUsers', 'totalOrders',
+            'grossCollected', 'successfulRefunds', 'netRevenue', 'forfeitureIncome', 'newOrders',
             'totalBatches', 'openBatches', 'totalReservations',
             'successRate', 'failedRate', 'heldDeposit', 'topProducts'
         ));

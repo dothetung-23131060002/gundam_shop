@@ -21,13 +21,19 @@
         @if($notifications->count() > 0)
             <div class="space-y-3">
                 @foreach($notifications as $notification)
-                    @php $data = $notification->data; @endphp
+                    @php
+                        $data = $notification->data;
+                        $link = (auth()->user()->role === 'admin' && ! empty($data['admin_link'])) ? $data['admin_link'] : ($data['link'] ?? null);
+                    @endphp
                     <div class="bg-bg-secondary border rounded-xl p-4 {{ $notification->read_at ? 'border-border' : 'border-accent-blue/30 bg-accent-blue/5' }}">
                         <div class="flex items-start justify-between gap-4">
-                            <div class="flex-1">
-                                <p class="{{ $notification->read_at ? 'text-text-secondary' : 'text-white font-medium' }} text-sm">
+                            <div class="flex-1 min-w-0">
+                                <p class="{{ $notification->read_at ? 'text-text-secondary' : 'text-white font-medium' }} text-sm break-words">
                                     {{ $data['message'] ?? 'Thông báo mới' }}
                                 </p>
+                                @if(! empty($data['reason']))
+                                    <p class="text-text-secondary text-xs mt-1">Lý do: {{ $data['reason'] }}</p>
+                                @endif
                                 <p class="text-text-secondary text-xs mt-1">{{ $notification->created_at->diffForHumans() }}</p>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
@@ -37,8 +43,8 @@
                                         <button type="submit" class="text-xs text-text-secondary hover:text-white transition-colors">Đã đọc</button>
                                     </form>
                                 @endif
-                                @if(! empty($data['link']))
-                                    <a href="{{ $data['link'] }}" class="text-xs text-accent-blue hover:text-white transition-colors">Xem →</a>
+                                @if(! empty($link))
+                                    <a href="{{ $link }}" class="text-xs text-accent-blue hover:text-white transition-colors">Xem →</a>
                                 @endif
                             </div>
                         </div>

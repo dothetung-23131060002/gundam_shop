@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -103,25 +104,20 @@ class ProductController extends Controller
             $alreadyReviewed = $product->reviews->contains('user_id', auth()->id());
 
             if (! $alreadyReviewed) {
-                $hasPurchased = DB::table('orders')
+                $canReview = DB::table('orders')
                     ->join('order_details', 'orders.id', '=', 'order_details.order_id')
                     ->where('orders.user_id', auth()->id())
                     ->where('order_details.product_id', $product->id)
                     ->where('orders.order_status', 'completed')
+                    ->where('orders.payment_status', 'paid')
                     ->exists();
-
-                $hasReservation = DB::table('reservations')
-                    ->join('batches', 'reservations.batch_id', '=', 'batches.id')
-                    ->where('reservations.user_id', auth()->id())
-                    ->where('batches.product_id', $product->id)
-                    ->where('reservations.status', 'converted')
-                    ->exists();
-
-                $canReview = $hasPurchased || $hasReservation;
             }
         }
 
-        return view('products.show', compact('product', 'canReview', 'alreadyReviewed'));
+        $isWishlisted = $product->isWishlistedBy(auth()->user());
+        $wishlistCount = Wishlist::where('product_id', $product->id)->count();
+
+        return view('products.show', compact('product', 'canReview', 'alreadyReviewed', 'isWishlisted', 'wishlistCount'));
     }
 
     /**

@@ -10,9 +10,12 @@ class TrustProxies extends Middleware
     /**
      * The trusted proxies for this application.
      *
+     * NOTE (demo qua ngrok): '*' để Laravel nhận đúng HTTPS sau reverse proxy.
+     * REVERT khi deploy production thật (liệt kê IP proxy cụ thể).
+     *
      * @var array<int, string>|string|null
      */
-    protected $proxies;
+    protected $proxies = '*';
 
     /**
      * The headers that should be used to detect proxies.

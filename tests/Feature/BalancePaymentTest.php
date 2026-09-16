@@ -15,6 +15,22 @@ class BalancePaymentTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // processBalancePayment() guards on configured payment methods.
+        config()->set('vietqr.account_name', 'TEST USER');
+        config()->set('vietqr.template', 'compact2');
+        config()->set('vietqr.default', 'mb');
+        config()->set('vietqr.methods', [
+            'mb' => ['label' => 'MB Bank', 'type' => 'bank', 'bank_id' => 'MB', 'account_no' => '111111'],
+            'tcb' => ['label' => 'Techcombank', 'type' => 'bank', 'bank_id' => 'TCB', 'account_no' => '222222'],
+            'vpb' => ['label' => 'VPBank', 'type' => 'bank', 'bank_id' => 'VPB', 'account_no' => '333333'],
+            'momo' => ['label' => 'MoMo', 'type' => 'wallet', 'account_no' => '0912345678'],
+        ]);
+    }
+
     public function test_user_can_pay_balance_on_successful_batch()
     {
         $user = User::factory()->create([
@@ -47,14 +63,15 @@ class BalancePaymentTest extends TestCase
 
         $response->assertRedirect();
         $reservation->refresh();
-        $this->assertEquals('converted', $reservation->status);
+        // Flow xác thực thủ công: chờ shop duyệt, reservation chưa convert.
+        $this->assertEquals('reserved', $reservation->status);
 
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
             'batch_id' => $batch->id,
             'total_amount' => 1000000,
             'payment_method' => 'balance',
-            'payment_status' => 'paid',
+            'payment_status' => 'awaiting_confirmation',
             'order_status' => 'pending',
         ]);
 

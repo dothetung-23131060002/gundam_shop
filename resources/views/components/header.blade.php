@@ -82,6 +82,14 @@
                             LƯU TRỮ
                         </a>
 
+                        <a href="{{ route('wishlist.index') }}" class="text-xs font-medium text-text-secondary hover:text-white transition-colors tracking-wide">
+                            YÊU THÍCH
+                        </a>
+
+                        <a href="{{ route('profile.edit') }}" class="text-xs font-medium text-text-secondary hover:text-white transition-colors tracking-wide">
+                            TÀI KHOẢN
+                        </a>
+
                         @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
                         <a href="{{ route('notifications.index') }}" aria-label="Thông báo{{ $unreadCount > 0 ? ', '.$unreadCount.' chưa đọc' : '' }}" class="relative text-text-secondary hover:text-white transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
@@ -159,8 +167,17 @@
                         <a href="{{ route('orders.mine') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
                             ĐƠN HÀNG CỦA TÔI
                         </a>
+                        <a href="{{ route('reservations.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
+                            LƯU TRỮ
+                        </a>
+                        <a href="{{ route('wishlist.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
+                            YÊU THÍCH
+                        </a>
                         <a href="{{ route('notifications.index') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
-                            THÔNG BÁO @if($unreadCount > 0)<span class="ml-1 bg-accent-red text-white text-[9px] px-1.5 py-0.5 rounded-full">{{ $unreadCount }}</span>@endif
+                            THÔNG BÁO @if(isset($unreadCount) && $unreadCount > 0)<span class="ml-1 bg-accent-red text-white text-[9px] px-1.5 py-0.5 rounded-full">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>@endif
+                        </a>
+                        <a href="{{ route('profile.edit') }}" class="block py-2 text-text-secondary hover:text-white transition-colors text-sm font-medium tracking-wide">
+                            TÀI KHOẢN
                         </a>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf

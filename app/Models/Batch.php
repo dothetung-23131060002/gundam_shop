@@ -38,6 +38,11 @@ class Batch extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function incidents()
+    {
+        return $this->hasMany(BatchIncident::class);
+    }
+
     public function activeReservations()
     {
         return $this->reservations()->where('status', 'reserved');

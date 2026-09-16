@@ -15,6 +15,12 @@
 
 <section class="py-8 lg:py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        @if(session('success'))
+            <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-6 text-green-400 text-sm">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6 text-red-400 text-sm">{{ session('error') }}</div>
+        @endif
         @if(count($cart) > 0)
             <div class="grid lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 space-y-4">

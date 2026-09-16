@@ -132,6 +132,7 @@
                     </div>
 
                     <div class="flex gap-4">
+                        <x-heart-button :product="$product" :isWishlisted="$isWishlisted ?? false" :wishlistCount="$wishlistCount ?? null" />
                         <form action="{{ route('cart.add', $product) }}" method="POST" class="flex-1" id="add-to-cart-form">
                             @csrf
                             <input type="hidden" name="quantity" id="cart-quantity" value="1">
@@ -228,6 +229,7 @@
                                 <label for="review-comment" class="block text-text-secondary text-sm mb-2">Nội dung</label>
                                 <textarea id="review-comment" name="comment" 
                                           rows="4" 
+                                          maxlength="1000"
                                           class="form-input text-sm"
                                           placeholder="Chia sẻ cảm nhận của bạn..."></textarea>
                             </div>
@@ -252,7 +254,7 @@
             <div class="lg:col-span-2">
                 @if($product->reviews->count() > 0)
                     <div class="space-y-4">
-                        @foreach($product->reviews->latest()->get() as $review)
+                        @foreach($product->reviews->sortByDesc('created_at') as $review)
                             <div class="bg-bg-secondary border border-border rounded-xl p-6">
                                 <div class="flex items-start justify-between mb-4">
                                     <div class="flex items-center gap-3">
@@ -325,7 +327,9 @@
         });
     }
 
-    // Initialize rating
-    setRating(5);
+    // Initialize rating (only when review form is rendered)
+    if (document.getElementById('rating-input')) {
+        setRating(5);
+    }
 </script>
 @endpush

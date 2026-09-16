@@ -71,8 +71,8 @@
 </div>
 
 <!-- Create Modal -->
-<div id="create-modal" role="dialog" aria-modal="true" aria-labelledby="create-modal-title" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-bg-secondary border border-border rounded-xl w-full max-w-md">
+<div id="create-modal" role="dialog" aria-modal="true" aria-labelledby="create-modal-title" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4" onclick="if (event.target === this) closeModal('create-modal')">
+    <div class="bg-bg-secondary border border-border rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between p-6 border-b border-border">
             <h3 id="create-modal-title" class="text-white font-semibold">Thêm danh mục mới</h3>
             <button onclick="closeModal('create-modal')" aria-label="Đóng hộp thoại thêm danh mục" class="text-text-secondary hover:text-white">
@@ -102,8 +102,8 @@
 </div>
 
 <!-- Edit Modal -->
-<div id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-bg-secondary border border-border rounded-xl w-full max-w-md">
+<div id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4" onclick="if (event.target === this) closeModal('edit-modal')">
+    <div class="bg-bg-secondary border border-border rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between p-6 border-b border-border">
             <h3 id="edit-modal-title" class="text-white font-semibold">Sửa danh mục</h3>
             <button onclick="closeModal('edit-modal')" aria-label="Đóng hộp thoại sửa danh mục" class="text-text-secondary hover:text-white">
@@ -138,17 +138,29 @@
 @push('scripts')
 <script>
     function openModal(id) {
-        document.getElementById(id).classList.remove('hidden');
+        var el = document.getElementById(id);
+        if (el) el.classList.remove('hidden');
     }
 
     function closeModal(id) {
-        document.getElementById(id).classList.add('hidden');
+        var el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
     }
 
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal('create-modal');
+            closeModal('edit-modal');
+        }
+    });
+
     function openEditModal(id, name, description) {
-        document.getElementById('edit-form').action = '{{ route("admin.categories.index") }}/' + id;
-        document.getElementById('edit-name').value = name;
-        document.getElementById('edit-description').value = description;
+        var form = document.getElementById('edit-form');
+        if (form) form.action = '{{ route("admin.categories.index") }}/' + id;
+        var nameInput = document.getElementById('edit-name');
+        if (nameInput) nameInput.value = name;
+        var descInput = document.getElementById('edit-description');
+        if (descInput) descInput.value = description;
         openModal('edit-modal');
     }
 </script>

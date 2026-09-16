@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Batch;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Reservation;
 use App\Models\User;
@@ -57,5 +58,43 @@ class AdminUserReservationsTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Chưa từng giữ slot nào');
+    }
+
+    public function test_admin_user_page_with_orders_renders()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $user = User::factory()->create(['role' => 'user']);
+
+        Order::create([
+            'user_id' => $user->id,
+            'customer_name' => $user->name,
+            'customer_phone' => '0900000000',
+            'customer_email' => $user->email,
+            'shipping_address' => 'HCM',
+            'total_amount' => 100000,
+            'payment_method' => 'cash',
+            'payment_status' => 'paid',
+            'order_status' => 'pending',
+        ]);
+        Order::create([
+            'user_id' => $user->id,
+            'customer_name' => $user->name,
+            'customer_phone' => '0900000000',
+            'customer_email' => $user->email,
+            'shipping_address' => 'HCM',
+            'total_amount' => 200000,
+            'payment_method' => 'cash',
+            'payment_status' => 'paid',
+            'order_status' => 'completed',
+        ]);
+
+        $response = $this->actingAs($admin)->get("/admin/users/{$user->id}");
+
+        $response->assertOk();
+        $response->assertSee('Lịch sử đơn hàng');
+        $response->assertSee('100.000');
+        $response->assertSee('200.000');
+        $response->assertSee('Chờ xác nhận');
+        $response->assertSee('Đã giao');
     }
 }

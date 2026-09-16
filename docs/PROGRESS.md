@@ -121,3 +121,20 @@ Log tiến độ theo phần. Mỗi phần ghi: làm gì, file chính, test, quy
 - Sửa chart tests thiếu `WelcomeEmailTest`; số cũ sai Example/AdminBatch (đừng cộng tay).
 - Slides + README đồng bộ 63/189, validator pass. Số "8 phân hệ" (slide 05) để user quyết.
 - Seed demo sạch: admin OK, demo customer/pass OK, batch 9/10 open, 3/8 open, 5/5 success.
+
+## Fix mail crash khi đăng ký (xong)
+- Nguyên nhân: `MAIL_HOST=mailpit` (Docker hostname) trên Windows native →
+  TransportException tại `notify()` dòng 35, response 500 dù user đã tạo + login.
+- Fix: `.env` → `127.0.0.1` (user tự sửa) + bọc notify trong try-catch
+  (`Log::warning`, redirect bình thường khi mail lỗi). Không dùng ShouldQueue
+  (queue sync + chưa worker).
+- Soát user rác: 10 user thiếu welcome-notify đều là seed hợp lệ (admin/demo/filler),
+  KHÔNG có orphan từ lần lỗi (đã bị cuốn theo `migrate:fresh` trước đó). Không xóa gì.
+- Verify end-to-end: notify thật → Mailpit API có 1 msg đúng subject (23:47+07).
+
+## Chuyển Gmail SMTP thật (xong)
+- `.env`: smtp/smtp.gmail.com/587 + username/from + App Password 16 ký tự
+  (chỉ nằm trong lệnh ghi, không in/không docs) + tls + from name Gundam Shop.
+- `phpunit.xml` giữ nguyên `MAIL_MAILER=array` — tests mù với SMTP thật.
+- Verify: gửi thử tới chính Gmail trên → TESTMAIL_SENT, không exception
+  (DB demo hoàn nguyên). Pint pass, 63/63 tests xanh.

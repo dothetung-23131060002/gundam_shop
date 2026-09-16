@@ -18,8 +18,12 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReturnRequestController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\WarrantyRequestController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,6 +54,9 @@ Route::delete('/cart/remove/{product}', [CartController::class, 'remove'])->name
 Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
     Route::get('/my-reservations', [ReservationController::class, 'index'])->name('reservations.index');
     Route::get('/reservations/{reservation}', [ReservationController::class, 'show'])->name('reservations.show');
@@ -72,6 +79,22 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 
     Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+    Route::get('/my-returns', [ReturnRequestController::class, 'index'])->name('returns.mine');
+    Route::get('/returns/create', [ReturnRequestController::class, 'create'])->name('returns.create');
+    Route::post('/returns', [ReturnRequestController::class, 'store'])->name('returns.store');
+    Route::get('/returns/{returnRequest}', [ReturnRequestController::class, 'show'])->name('returns.show');
+    Route::post('/returns/{returnRequest}/cancel', [ReturnRequestController::class, 'cancel'])->name('returns.cancel');
+
+    Route::get('/my-warranties', [WarrantyRequestController::class, 'index'])->name('warranties.mine');
+    Route::get('/warranties/create', [WarrantyRequestController::class, 'create'])->name('warranties.create');
+    Route::post('/warranties', [WarrantyRequestController::class, 'store'])->name('warranties.store');
+    Route::get('/warranties/{warrantyRequest}', [WarrantyRequestController::class, 'show'])->name('warranties.show');
+    Route::post('/warranties/{warrantyRequest}/cancel', [WarrantyRequestController::class, 'cancel'])->name('warranties.cancel');
+
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/toggle/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    Route::delete('/wishlist/{wishlist}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
 });
 
 Route::middleware('guest')->group(function () {
@@ -100,6 +123,25 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/reservations/{reservation}/collect', [App\Http\Controllers\Admin\ReservationController::class, 'collectBalance'])->name('reservations.collect');
     Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
     Route::get('/refunds/{refund}', [RefundController::class, 'show'])->name('refunds.show');
+    Route::get('/returns', [App\Http\Controllers\Admin\ReturnRequestController::class, 'index'])->name('returns.index');
+    Route::get('/returns/{returnRequest}', [App\Http\Controllers\Admin\ReturnRequestController::class, 'show'])->name('returns.show');
+    Route::post('/returns/{returnRequest}/approve', [App\Http\Controllers\Admin\ReturnRequestController::class, 'approve'])->name('returns.approve');
+    Route::post('/returns/{returnRequest}/reject', [App\Http\Controllers\Admin\ReturnRequestController::class, 'reject'])->name('returns.reject');
+    Route::post('/returns/{returnRequest}/receive', [App\Http\Controllers\Admin\ReturnRequestController::class, 'receive'])->name('returns.receive');
+    Route::post('/returns/{returnRequest}/inspect', [App\Http\Controllers\Admin\ReturnRequestController::class, 'inspect'])->name('returns.inspect');
+    Route::post('/returns/{returnRequest}/complete-no-return', [App\Http\Controllers\Admin\ReturnRequestController::class, 'completeWithoutReturn'])->name('returns.complete-no-return');
+    Route::post('/returns/{returnRequest}/complete', [App\Http\Controllers\Admin\ReturnRequestController::class, 'complete'])->name('returns.complete');
+    Route::get('/warranties', [App\Http\Controllers\Admin\WarrantyRequestController::class, 'index'])->name('warranties.index');
+    Route::get('/warranties/{warrantyRequest}', [App\Http\Controllers\Admin\WarrantyRequestController::class, 'show'])->name('warranties.show');
+    Route::post('/warranties/{warrantyRequest}/approve', [App\Http\Controllers\Admin\WarrantyRequestController::class, 'approve'])->name('warranties.approve');
+    Route::post('/warranties/{warrantyRequest}/reject', [App\Http\Controllers\Admin\WarrantyRequestController::class, 'reject'])->name('warranties.reject');
+    Route::post('/warranties/{warrantyRequest}/processing', [App\Http\Controllers\Admin\WarrantyRequestController::class, 'processing'])->name('warranties.processing');
+    Route::post('/warranties/{warrantyRequest}/complete', [App\Http\Controllers\Admin\WarrantyRequestController::class, 'complete'])->name('warranties.complete');
+    Route::get('/batch-incidents', [App\Http\Controllers\Admin\BatchIncidentController::class, 'index'])->name('batch-incidents.index');
+    Route::get('/batch-incidents/create', [App\Http\Controllers\Admin\BatchIncidentController::class, 'create'])->name('batch-incidents.create');
+    Route::post('/batch-incidents', [App\Http\Controllers\Admin\BatchIncidentController::class, 'store'])->name('batch-incidents.store');
+    Route::get('/batch-incidents/{batchIncident}', [App\Http\Controllers\Admin\BatchIncidentController::class, 'show'])->name('batch-incidents.show');
+    Route::post('/batch-incidents/{batchIncident}/resolve', [App\Http\Controllers\Admin\BatchIncidentController::class, 'resolve'])->name('batch-incidents.resolve');
     Route::get('/action-logs', [AdminActionLogController::class, 'index'])->name('action-logs.index');
     Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
@@ -107,6 +149,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/orders/export', [AdminOrderController::class, 'export'])->name('orders.export');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::post('/orders/{order}/confirm-payment', [AdminOrderController::class, 'confirmPayment'])->name('orders.confirm-payment');
+    Route::post('/orders/{order}/reject-payment', [AdminOrderController::class, 'rejectPayment'])->name('orders.reject-payment');
+    Route::post('/orders/{order}/collect-cod', [AdminOrderController::class, 'collectCod'])->name('orders.collect-cod');
 
     Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('users', UserController::class)->only(['index', 'show']);

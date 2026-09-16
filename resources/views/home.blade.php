@@ -210,6 +210,35 @@
 </section>
 
 <!-- ============================================
+     SECTION: BEST SELLERS (theo đơn hàng thực tế)
+     ============================================ -->
+@if(($bestSellers ?? collect())->isNotEmpty())
+<section class="py-16 lg:py-24 bg-bg-secondary/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="flex items-center gap-4 mb-12">
+            <div class="w-1 h-8 bg-accent-red"></div>
+            <h2 class="text-3xl lg:text-4xl font-bold text-white tracking-wider font-display">SẢN PHẨM BÁN CHẠY</h2>
+            <div class="flex-1 h-px bg-gradient-to-r from-border to-transparent"></div>
+            <a href="{{ route('products.index') }}" class="text-accent-blue text-sm font-medium hover:text-accent-blue-dark transition-colors flex items-center gap-1">
+                Xem tất cả
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach($bestSellers as $product)
+                @include('components.product-card', ['product' => $product, 'index' => $loop->iteration])
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+<!-- ============================================
      SECTION 4: NEW PRODUCTS
      ============================================ -->
 <section class="py-16 lg:py-24 bg-bg-secondary/50">

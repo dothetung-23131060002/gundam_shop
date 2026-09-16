@@ -7,8 +7,11 @@ use App\Http\Controllers\Admin\Concerns\LogsAdminActions;
 use App\Http\Controllers\Controller;
 use App\Models\Batch;
 use App\Models\Product;
+use App\Models\User;
+use App\Notifications\BatchOpened;
 use App\Services\BatchService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BatchController extends Controller
 {
@@ -59,7 +62,19 @@ class BatchController extends Controller
             'deadline' => 'required|date|after:now',
         ]);
 
-        Batch::create($validated);
+        $batch = Batch::create($validated);
+
+        // Notify users who wishlisted this product (database + mail if configured).
+        // Never fails batch creation.
+        try {
+            User::whereHas('wishlists', function ($q) use ($batch) {
+                $q->where('product_id', $batch->product_id);
+            })->where('id', '!=', auth()->id())->get()->each(
+                fn (User $user) => $user->notify(new BatchOpened($batch->load('product')))
+            );
+        } catch (\Throwable $e) {
+            Log::warning('Batch opened notify failed', ['batch_id' => $batch->id, 'error' => $e->getMessage()]);
+        }
 
         return redirect()->route('admin.batches.index')
             ->with('success', 'Đã tạo đợt gom hàng mới.');

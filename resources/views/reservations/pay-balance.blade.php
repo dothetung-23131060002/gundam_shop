@@ -24,6 +24,14 @@
 
     <div class="grid lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-6">
+            @php
+                $canPay = ($paymentOptions['has_methods'] ?? false) && ($paymentOptions['amount_valid'] ?? false);
+            @endphp
+            <div class="bg-bg-secondary border border-border rounded-xl p-6">
+                <h3 class="text-white font-semibold mb-4">Phương thức thanh toán</h3>
+                @include('components.payment-methods', ['paymentOptions' => $paymentOptions ?? []])
+            </div>
+
             <form action="{{ route('reservations.process-balance', $reservation) }}" method="POST" onsubmit="var b=this.querySelector('[type=submit]');b.disabled=true;b.textContent='ĐANG XỬ LÝ...';">
                 @csrf
 
@@ -56,7 +64,7 @@
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <button type="submit" class="btn-primary px-8 py-3 text-sm font-medium">XÁC NHẬN THANH TOÁN</button>
+                    <button type="submit" @if(! $canPay) disabled @endif class="btn-primary px-8 py-3 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">XÁC NHẬN THANH TOÁN</button>
                 </div>
             </form>
         </div>
@@ -88,7 +96,7 @@
                 </div>
 
                 <div class="mt-4 bg-accent-gold/10 border border-accent-gold/30 rounded-lg p-3 text-sm text-accent-gold">
-                    <p>Thanh toán mô phỏng — không tích hợp cổng thanh toán thật.</p>
+                    <p>Chuyển khoản đúng số tiền và nội dung ở tab đã chọn, sau đó bấm xác nhận. Admin sẽ đối soát và tạo đơn hàng.</p>
                 </div>
             </div>
         </div>

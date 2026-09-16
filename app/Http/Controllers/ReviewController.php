@@ -28,16 +28,10 @@ class ReviewController extends Controller
             ->where('orders.user_id', auth()->id())
             ->where('order_details.product_id', $product->id)
             ->where('orders.order_status', 'completed')
+            ->where('orders.payment_status', 'paid')
             ->exists();
 
-        $hasReservation = DB::table('reservations')
-            ->join('batches', 'reservations.batch_id', '=', 'batches.id')
-            ->where('reservations.user_id', auth()->id())
-            ->where('batches.product_id', $product->id)
-            ->where('reservations.status', 'converted')
-            ->exists();
-
-        if (! $hasPurchased && ! $hasReservation) {
+        if (! $hasPurchased) {
             return back()->with('error', 'Chỉ khách đã mua hàng mới được đánh giá sản phẩm này.');
         }
 

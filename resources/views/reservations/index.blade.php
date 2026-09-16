@@ -44,8 +44,10 @@
                                     <x-status-pill tone="red">Đã hoàn cọc</x-status-pill>
                                 @elseif($reservation->status === 'cancelled')
                                     <x-status-pill tone="red">Đã hủy</x-status-pill>
-                                @else
+                                @elseif($reservation->status === 'converted')
                                     <x-status-pill tone="gold">Đã chuyển đơn</x-status-pill>
+                                @else
+                                    <x-status-pill tone="gray">{{ $reservation->status }}</x-status-pill>
                                 @endif
                             </div>
 
