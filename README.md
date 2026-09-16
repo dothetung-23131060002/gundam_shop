@@ -73,6 +73,11 @@ Batch chỉ tự chốt/refund khi scheduler chạy:
 Trang chủ, danh mục, chi tiết SP, tìm kiếm/lọc/sắp xếp/phân trang, giỏ hàng (Session),
 checkout COD/QR mô phỏng, auth + phân quyền, admin dashboard/CRUD, notifications database.
 
+Wishlist: `POST /wishlist/toggle/{product}` (AJAX, guest 401 JSON) — lưu SP muốn mua sau;
+`GET /wishlist` — danh sách + trạng thái đợt gom hiện tại từng SP (còn X slot / chưa có đợt mới);
+`DELETE /wishlist/{wishlist}` (ownership) — tự xóa khi SP bị xóa (cascade); có batch mới mở
+cho SP trong wishlist thì tự động thông báo (database + mail nếu cấu hình SMTP).
+
 ## Admin batch (rebuild riêng, xem `docs/PROGRESS.md`)
 
 - Đợt gom: index (% tiến độ) + CRUD + show (reservations), **Đóng sớm** (đủ ngưỡng)
